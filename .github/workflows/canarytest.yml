@@ -16,7 +16,7 @@ jobs:
           pr_description=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}" | jq -r '.body')
           
-          if echo "$pr_description" | grep -q ":yellow-man:"; then
+          if echo "$pr_description" | grep -q "yellow-man"; then
             echo "This is a canary test for our guidelines. Please, read our guidelines before proceeding with you PR."
             exit 1
           else
