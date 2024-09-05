@@ -1,4 +1,4 @@
-name: PR Description Check
+name: Canary Test
 
 on:
   pull_request:
@@ -11,16 +11,14 @@ jobs:
       - name: Check out the repository
         uses: actions/checkout@v2
 
-      - name: Check PR description for :yellow-man:
+      - name: Canary Test
         run: |
-          # Obtem a descrição da PR
           pr_description=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}" | jq -r '.body')
           
-          # Verifica se a descrição contém a palavra proibida
           if echo "$pr_description" | grep -q ":yellow-man:"; then
-            echo "Found ':yellow-man:' in the PR description. Failing the job."
+            echo "This is a canary test for our guidelines. Please, read our guidelines before proceeding with you PR."
             exit 1
           else
-            echo "PR description is valid."
+            echo "Thanks for read our guidelines."
           fi
