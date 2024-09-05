@@ -1,0 +1,20 @@
+name: Canary Test - Guidelines
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, draft]
+
+jobs:
+  keyword_check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Canary Test - Guidelines
+        run: |
+          if grep -r ":yellow-man:" .; then
+            echo "Please, read our guidelines before opening a PR."
+            exit 1
+          fi
