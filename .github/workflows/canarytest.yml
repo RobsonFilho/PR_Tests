@@ -9,12 +9,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
       - name: Check PR Description for Keyword
         run: |
-          pr_body=$(gh pr view ${{ github.event.pull_request.number }} --json body -q .body)
+          # Get the PR description using GitHub REST API
+          pr_body=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }} \
+            | jq -r .body)
+          
+          # Check if the keyword ":yellow-man:" is present in the PR description
           if echo "$pr_body" | grep -F ":yellow-man:"; then
             echo "Please, read our guidelines before opening a PR."
             exit 1
