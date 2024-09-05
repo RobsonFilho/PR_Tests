@@ -12,10 +12,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Canary Test - Guidelines
+      - name: Check PR Description for Keyword
         run: |
-          # Use grep with -F flag to treat the pattern as a fixed string, not a regular expression
-          if grep -r -F ":yellow-man:" .; then
+          pr_body=$(gh pr view ${{ github.event.pull_request.number }} --json body -q .body)
+          if echo "$pr_body" | grep -F ":yellow-man:"; then
             echo "Please, read our guidelines before opening a PR."
             exit 1
           fi
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
