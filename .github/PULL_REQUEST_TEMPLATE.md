@@ -75,4 +75,4 @@ If a change only applies to a very limited domain, it's likely it could be solve
 
 #### Hey !
 ***If you've made it this far, I hope you've read all our  [guidelines](https://nubank.atlassian.net/wiki/spaces/SDAPF/pages/263932675104/Guidelines) :)
-We are running a canary test to see how many engineers read our guidelines until the end, so to be able to open the PR, delete this keyword:*** yellow-man
+We are running a canary test to see how many engineers read our guidelines until the end, so to be able to open the PR, delete this word:*** yellow-man
