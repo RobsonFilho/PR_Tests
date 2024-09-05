@@ -4,6 +4,9 @@ on:
   pull_request:
     types: [opened, edited]
 
+permissions:
+  pull-requests: read  # Concede permissão de leitura para Pull Requests
+
 jobs:
   check_pr_description:
     runs-on: ubuntu-latest
