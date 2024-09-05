@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check PR Description for Keyword
+      - name: Check PR Description and First Comment for Keyword
         run: |
           # Get the PR description using GitHub REST API
           pr_body=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
@@ -18,7 +18,18 @@ jobs:
           
           # Check if the keyword ":yellow-man:" is present in the PR description
           if echo "$pr_body" | grep -F ":yellow-man:"; then
-            echo "Please, read our guidelines before opening a PR."
+            echo "Please, read our guidelines before opening a PR (found in description)."
+            exit 1
+          fi
+          
+          # Get the first comment using GitHub REST API (issue comments API includes PR comments)
+          first_comment=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments \
+            | jq -r '.[0].body')
+          
+          # Check if the keyword ":yellow-man:" is present in the first comment
+          if echo "$first_comment" | grep -F ":yellow-man:"; then
+            echo "Please, read our guidelines before opening a PR (found in first comment)."
             exit 1
           fi
 
