@@ -11,14 +11,24 @@ jobs:
       - name: Check out the repository
         uses: actions/checkout@v2
 
-      - name: Debug - Print PR description
+      - name: Debug - Print PR details
         run: |
-          # Obtem a descrição da PR
-          pr_description=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}" | jq -r '.body')
+          # Obtem os detalhes completos da PR
+          pr_details=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}")
           
-          # Imprime a descrição da PR para depuração
-          echo "PR Description: $pr_description"
+          # Imprime os detalhes completos da PR para depuração
+          echo "PR Details: $pr_details"
+          
+          # Obtem a descrição da PR a partir dos detalhes
+          pr_description=$(echo "$pr_details" | jq -r '.body')
+          
+          # Verifica se a descrição está vazia ou nula
+          if [ -z "$pr_description" ] || [ "$pr_description" = "null" ]; then
+            echo "No PR description found or description is empty."
+          else
+            echo "PR Description: $pr_description"
+          fi
 
       - name: Check PR description for yellow-man
         run: |
