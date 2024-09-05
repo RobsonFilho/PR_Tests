@@ -1,37 +1,20 @@
-name: Canary Test - Guidelines
+name: Check for :yellow-man: in PR Description
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, draft]
+    types: [opened, edited]
 
 jobs:
-  keyword_check:
+  check-description:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Check description and first comment for yellow man keyword
-        run: |
-          pr_body=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }} \
-            | jq -r .body)
-          
-          if echo "$pr_body" | grep -F ":yellow-man:"; then
-            echo "Please, read our guidelines before opening a PR (found in description)."
-            exit 1
-          fi
-          
-          pr_comments=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments)
-          
-          if [ "$(echo "$pr_comments" | jq '. | length')" -gt 0 ]; then
-            # Extract the first comment
-            first_comment=$(echo "$pr_comments" | jq -r '.[0].body')
-
-            if echo "$first_comment" | grep -F ":yellow-man:"; then
-              echo "Please, read our guidelines before opening a PR (found in first comment)."
-              exit 1
-            fi
-          fi
-
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check for :yellow-man: in PR body
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const prBody = context.payload.pull_request.body;
+            if (prBody && prBody.includes(':yellow-man:')) {
+              core.setFailed('PR contains :yellow-man:');
+            } else {
+              console.log('No :yellow-man: found in PR description.');
+            }
